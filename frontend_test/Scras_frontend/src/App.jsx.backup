@@ -1,0 +1,100 @@
+// src/App.jsx - Complete Working Version
+import React, { useState, useEffect } from 'react';
+
+// Simple Login component for testing
+const Login = ({ onLogin }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Simple demo login
+        if (email && password) {
+            onLogin({ role: 'admin', email });
+        }
+    };
+
+    return (
+        <div style={{ padding: '50px', textAlign: 'center' }}>
+            <h1>SCRAS Login</h1>
+            <form onSubmit={handleSubmit} style={{ maxWidth: '300px', margin: '0 auto' }}>
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={{ width: '100%', padding: '10px', margin: '10px 0' }}
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{ width: '100%', padding: '10px', margin: '10px 0' }}
+                />
+                <button type="submit" style={{ padding: '10px 20px' }}>Login</button>
+            </form>
+        </div>
+    );
+};
+
+// Simple Sidebar
+const Sidebar = ({ activePage, onPageChange }) => {
+    const menuItems = ['Departments', 'Teachers', 'Students', 'Rooms', 'Courses'];
+
+    return (
+        <div style={{ width: '250px', background: '#1e293b', color: 'white', height: '100vh', position: 'fixed', padding: '20px' }}>
+            <h2>SCRAS</h2>
+            {menuItems.map(item => (
+                <button
+                    key={item}
+                    onClick={() => onPageChange(item.toLowerCase())}
+                    style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '10px',
+                        margin: '5px 0',
+                        background: activePage === item.toLowerCase() ? '#3b82f6' : 'transparent',
+                        color: 'white',
+                        border: 'none',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                    }}
+                >
+                    {item}
+                </button>
+            ))}
+        </div>
+    );
+};
+
+// Simple Content
+const Content = ({ page }) => {
+    return (
+        <div style={{ padding: '20px' }}>
+            <h1>{page.charAt(0).toUpperCase() + page.slice(1)} Page</h1>
+            <p>Content for {page} will appear here.</p>
+        </div>
+    );
+};
+
+// Main App
+const App = () => {
+    const [authenticated, setAuthenticated] = useState(false);
+    const [activePage, setActivePage] = useState('departments');
+
+    if (!authenticated) {
+        return <Login onLogin={() => setAuthenticated(true)} />;
+    }
+
+    return (
+        <div>
+            <Sidebar activePage={activePage} onPageChange={setActivePage} />
+            <div style={{ marginLeft: '250px', padding: '20px' }}>
+                <Content page={activePage} />
+            </div>
+        </div>
+    );
+};
+
+export default App;

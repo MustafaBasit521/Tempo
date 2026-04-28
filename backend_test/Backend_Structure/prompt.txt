@@ -1,0 +1,169 @@
+Project: Campus Resource Allocation System
+
+Tech Stack:
+
+* Backend: Node.js + Express (REST API)
+* Database: MS SQL Server
+* Frontend: React
+
+Architecture (Final):
+
+* Layered + Feature-Based Architecture
+* Route → Controller → Service → Database
+* Services are split by FEATURE (NOT by role)
+
+Folder Structure:
+
+* models/ → Sequelize models (1 per table)
+* services/ → feature-based logic (department, student, course, room, timetable, booking, user/auth)
+* controllers/ → request/response handling
+* routes/ → API endpoints + middleware
+* middleware/ → authentication & authorization (JWT + role-based access)
+
+Key Design Rules:
+
+* Model = DB table only (no business logic)
+* Service = business logic + DB interaction
+* Controller = request/response only
+* Routes = endpoint definitions + middleware
+* Role (Admin/Teacher/Student/TA) = authorization only (NOT separate services)
+* Raw SQL MUST be used for joins and complex queries
+* Sequelize can be used for simple CRUD operations
+* No SQL inside controllers
+* Auth checks only in routes/middleware
+
+Schema (Final - Locked):
+
+Tables:
+
+1. Departments (department_id, name)
+2. Teachers (teacher_id, name, department_id, email)
+3. Students (student_id PK, roll_number UNIQUE, name, batch_year, section, department_id, enrollment_status, email)
+4. Rooms (room_id, room_number, building, floor, capacity, room_type)
+5. Courses (course_code PK, name, credit_hours, department_id, course_type, semester, teacher_id)
+6. TimeSlots (slot_id, department_id, semester, course_code, day, start_time, end_time)
+7. Schedules (schedule_id, course_code, room_id, teacher_id, slot_id, section, batch_year, department_id)
+8. Bookings (booking_id, room_id, teacher_id, slot_id, booking_date, purpose, booked_by, status)
+9. Users (user_id, name, email, password_hash, role, reference_id)
+10. LoginSessions (session_id, user_id, token, login_time, expires_at, is_active)
+11. TAs (ta_id, roll_number, name, email, department_id, teacher_id)
+
+Design Decisions:
+
+* Admin does NOT have a separate table → stored only in Users (role = 'Admin')
+* reference_id:
+
+  * NULL for Admin
+  * Links to student_id / teacher_id / ta_id for other roles
+* name and email are duplicated across Users and role tables (intentional for simplicity)
+* consistency must be maintained manually or via triggers
+
+Triggers:
+
+* TR_Users_ValidateReferenceId:
+
+  * Ensures reference_id exists in correct table
+  * Allows NULL only for Admin
+* No automatic section assignment (handled manually or via backend logic)
+
+Timetable Handling (CRITICAL LOGIC):
+
+* System stores ONLY current semester data
+* Before uploading new timetable:
+  DELETE in order:
+  → Bookings
+  → Schedules
+  → TimeSlots
+  → Courses
+  → Rooms
+  → Teachers
+  → Departments
+  → TAs
+* Students remain persistent
+* No historical data is maintained
+
+Timetable Flow:
+
+1. Admin uploads XLS timetable
+2. Backend parses file
+3. Sends structured data to LLM
+4. LLM returns clean JSON:
+
+   * TimeSlots
+   * Schedules
+5. Backend validates data
+6. Insert flow:
+
+   * Insert TimeSlots first
+   * Then insert Schedules using slot_id
+7. No stored procedures used
+
+Core System Logic:
+
+* TimeSlots = WHEN (day, time)
+* Schedules = WHAT + WHERE + WHO (course, room, teacher, section)
+* Rooms, Courses, Teachers = static entities
+* Schedules = dynamic mapping
+
+Features to Build:
+
+Auth:
+
+* Login/logout using JWT
+* Role-based middleware (Admin / Teacher / Student / TA)
+
+Admin Capabilities:
+
+* Manage departments, teachers, courses, rooms
+* Upload timetable (XLS → LLM → DB)
+* Approve/reject bookings
+
+Student:
+
+* View timetable
+* Class locator (by section or course_code)
+
+Teacher / TA:
+
+* View schedule
+* Request room booking
+
+Booking System:
+
+* Create booking request
+* Admin approval workflow
+
+Core APIs Required:
+
+* GET /rooms/:id/schedule
+* GET /students/:id/schedule
+* GET /schedule?course_code=...
+* GET /schedule?section=...
+
+Current Progress:
+
+* Database schema finalized and implemented
+* Sequelize models created
+* Express server running with DB connection
+* Core modules started (department, course, room)
+
+Pending:
+
+* Build timetable_service (TimeSlots + Schedules)
+* Build schedule query APIs (joins)
+* Implement JWT authentication + role middleware
+* Build XLS upload → LLM → DB pipeline
+* Connect React frontend
+
+Instructions for LLM:
+
+* Follow feature-based service architecture strictly
+* NEVER mix role logic into services
+* Use raw SQL for joins and schedule queries
+* Keep code clean, minimal, and production-ready
+* Avoid over-engineering
+* Provide complete working code when asked
+* Always respect the schema and constraints
+* Focus on correctness over complexity
+* Keep explanations short and practical
+ 
