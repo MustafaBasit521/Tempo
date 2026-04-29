@@ -127,9 +127,6 @@ const Courses = () => {
                     <h1>Courses</h1>
                     <p>{courses.length} courses total</p>
                 </div>
-                <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-                    + Add Course
-                </button>
             </div>
 
             <div className="stats-grid" style={{gridTemplateColumns: 'repeat(4, 1fr)'}}>

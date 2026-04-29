@@ -269,6 +269,31 @@ export const deleteCourse = async (courseCode) => {
     }
 };
 
+// ==================== TIMETABLE APIs ====================
+
+export const uploadTimetable = async (file) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await api.post('/admin/timetable/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        
+        return {
+            success: true,
+            data: response.data,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Failed to upload timetable',
+        };
+    }
+};
+
 // ==================== BOOKING/APPROVAL APIs ====================
 
 export const getBookingRequests = async () => {

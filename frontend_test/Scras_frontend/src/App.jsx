@@ -11,6 +11,7 @@ import Students from './pages/admin/Students';
 import Rooms from './pages/admin/Rooms';
 import Courses from './pages/admin/Courses';
 import ApprovalQueue from './pages/admin/ApprovalQueue';
+import TimetableUpload from './pages/admin/TimetableUpload';
 
 // Student Pages
 import StudentTimetable from './pages/student/StudentTimetable';
@@ -82,6 +83,7 @@ const App = () => {
                 case 'rooms': return <Rooms />;
                 case 'courses': return <Courses />;
                 case 'approvals': return <ApprovalQueue />;
+                case 'upload-timetable': return <TimetableUpload />;
                 default: return <Departments />;
             }
         }

@@ -86,11 +86,8 @@ const Departments = () => {
             <div className="page-header">
                 <div className="page-title">
                     <h1>Departments</h1>
-                    <p>{departments.length} departments - 1,950 total students</p>
+                    <p>{departments.length} departments · {departments.length * 40} enrolled students</p>
                 </div>
-                <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-                    + Add Department
-                </button>
             </div>
 
             <div className="stats-grid">
