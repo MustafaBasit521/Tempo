@@ -122,6 +122,55 @@ export const deleteTeacher = async (id) => {
     }
 };
 
+// ==================== TA APIs ====================
+
+export const getTAs = async () => {
+    try {
+        const response = await api.get('/admin/tas');
+        return {
+            success: true,
+            data: response.data || [],
+        };
+    } catch (error) {
+        console.error('Get TAs error:', error);
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Failed to fetch TAs',
+            data: [],
+        };
+    }
+};
+
+export const createTA = async (taData) => {
+    try {
+        const response = await api.post('/admin/ta', taData);
+        return {
+            success: true,
+            data: response.data,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Failed to create TA',
+        };
+    }
+};
+
+export const deleteTA = async (id) => {
+    try {
+        const response = await api.delete(`/admin/ta/${id}`);
+        return {
+            success: true,
+            message: response.data?.message || 'TA deleted successfully',
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Failed to delete TA',
+        };
+    }
+};
+
 // ==================== STUDENT APIs ====================
 
 export const getStudents = async () => {
@@ -360,7 +409,11 @@ export default {
     getCourses,
     createCourse,
     deleteCourse,
+    getTAs,
+    createTA,
+    deleteTA,
     getBookingRequests,
     approveBooking,
     rejectBooking,
+    uploadTimetable
 };

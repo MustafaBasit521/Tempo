@@ -23,7 +23,7 @@ const roomTypeIcons = {
     "English Lab": "🗣️",
 };
 
-export default function MyBookings() {
+export default function MyBookings({ onPageChange }) {
     const user = getCurrentUser();
     const service = user?.role?.toLowerCase() === "ta" ? taService : teacherService;
 
@@ -67,9 +67,33 @@ export default function MyBookings() {
 
     return (
         <div style={{ padding: "0" }}>
-            <div style={{ marginBottom: "32px" }}>
-                <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>My Bookings</h1>
-                <p style={{ color: '#64748b', fontSize: '14px' }}>Track and manage your room reservation requests</p>
+            <div style={{ marginBottom: "32px", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>My Bookings</h1>
+                    <p style={{ color: '#64748b', fontSize: '14px' }}>Track and manage your room reservation requests</p>
+                </div>
+                <button 
+                    onClick={() => onPageChange('room-finder')}
+                    style={{ 
+                        background: '#7c3aed', 
+                        color: 'white', 
+                        padding: '12px 24px', 
+                        borderRadius: '12px', 
+                        border: 'none', 
+                        fontWeight: '700', 
+                        fontSize: '14px', 
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 10px 15px -3px rgba(124, 58, 237, 0.3)',
+                        transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(124, 58, 237, 0.4)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(124, 58, 237, 0.3)'; }}
+                >
+                    <span style={{ fontSize: '18px', fontWeight: '400' }}>+</span> Book New Room
+                </button>
             </div>
 
             {message.text && (

@@ -12,6 +12,7 @@ import Rooms from './pages/admin/Rooms';
 import Courses from './pages/admin/Courses';
 import ApprovalQueue from './pages/admin/ApprovalQueue';
 import TimetableUpload from './pages/admin/TimetableUpload';
+import TAs from './pages/admin/TAs';
 
 // Student Pages
 import StudentTimetable from './pages/student/StudentTimetable';
@@ -44,6 +45,13 @@ const App = () => {
             else setActivePage('departments');
         }
         setLoading(false);
+
+        // Global page change listener
+        const handleExternalPageChange = (e) => {
+            if (e.detail) setActivePage(e.detail);
+        };
+        window.addEventListener('onPageChange', handleExternalPageChange);
+        return () => window.removeEventListener('onPageChange', handleExternalPageChange);
     }, []);
 
     const handleLoginSuccess = (userData) => {
@@ -84,6 +92,7 @@ const App = () => {
                 case 'courses': return <Courses />;
                 case 'approvals': return <ApprovalQueue />;
                 case 'upload-timetable': return <TimetableUpload />;
+                case 'tas': return <TAs />;
                 default: return <Departments />;
             }
         }
@@ -98,17 +107,17 @@ const App = () => {
 
         if (userRole === 'teacher') {
             switch (activePage) {
-                case 'my-schedule': return <MyBookings />; // Reusing MyBookings as schedule/bookings manager
+                case 'my-schedule': return <MyBookings onPageChange={setActivePage} />; // Reusing MyBookings as schedule/bookings manager
                 case 'room-finder': return <RoomFinder />;
-                default: return <MyBookings />;
+                default: return <MyBookings onPageChange={setActivePage} />;
             }
         }
 
         if (userRole === 'ta') {
             switch (activePage) {
-                case 'my-schedule': return <TAMyBookings />;
+                case 'my-schedule': return <TAMyBookings onPageChange={setActivePage} />;
                 case 'room-finder': return <TARoomFinder />;
-                default: return <TAMyBookings />;
+                default: return <TAMyBookings onPageChange={setActivePage} />;
             }
         }
 
