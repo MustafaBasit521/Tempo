@@ -1,0 +1,113 @@
+resora-backend/
+│
+├── config/
+│   └── db.config.js                    # SHARED - anyone sets this up first
+│
+├── src/
+│   │
+│   ├── models/                         # SHARED base classes
+│   │   ├── User.js                     # SHARED - base class (set up first)
+│   │   │
+│   │   │── [PERSON 1 - ADMIN]
+│   │   ├── Admin.js
+│   │   ├── Department.js
+│   │   ├── Course.js
+│   │   ├── Room.js
+│   │   ├── TimeSlot.js
+│   │   ├── Timetable.js
+│   │   ├── Schedule.js
+│   │   ├── Notification.js
+│   │   │
+│   │   │── [PERSON 2 - TEACHER]
+│   │   ├── Teacher.js
+│   │   ├── Booking.js
+│   │   │
+│   │   │── [PERSON 3 - TA + STUDENT]
+│   │   ├── TA.js
+│   │   └── Student.js
+│   │
+│   │
+│   ├── controllers/
+│   │   │
+│   │   │── [PERSON 1 - ADMIN]
+│   │   ├── AuthController.js           # UC-01, UC-02 (Login/Logout - all roles)
+│   │   ├── AdminController.js          # UC-03,04,05,06,07,08 (Manage everything)
+│   │   ├── TimetableController.js      # UC-09,10,11,12,13,14 (Generate, Export)
+│   │   │
+│   │   │── [PERSON 2 - TEACHER]
+│   │   ├── TeacherController.js        # UC-13 (View Timetable)
+│   │   ├── RoomBookingController.js    # UC-15,16,19 (Search, Book, Cancel)
+│   │   │
+│   │   │── [PERSON 3 - TA + STUDENT]
+│   │   ├── TAController.js             # UC-13,15,16,19 (same as teacher)
+│   │   └── StudentController.js        # UC-13,20,21,22 (Search Class, View)
+│   │
+│   │
+│   ├── services/
+│   │   │
+│   │   │── [PERSON 1 - ADMIN]
+│   │   ├── AuthService.js              # Session, password hashing
+│   │   ├── DepartmentService.js        # UC-03
+│   │   ├── TeacherService.js           # UC-04
+│   │   ├── StudentService.js           # UC-05
+│   │   ├── RoomService.js              # UC-06
+│   │   ├── CourseService.js            # UC-07
+│   │   ├── TimeSlotService.js          # UC-08
+│   │   ├── TimetableService.js         # UC-09, UC-10 (scheduling algorithm)
+│   │   ├── ConflictService.js          # UC-11 (SHARED - used by P1 and P2)
+│   │   ├── SaveTimetableService.js     # UC-12
+│   │   ├── ExportService.js            # UC-14 (PDF/Excel export)
+│   │   │
+│   │   │── [PERSON 2 - TEACHER]
+│   │   ├── BookingService.js           # UC-16, UC-18, UC-19
+│   │   ├── NotificationService.js      # UC-17 (SHARED - used by P1 too)
+│   │   ├── RoomSearchService.js        # UC-15
+│   │   │
+│   │   │── [PERSON 3 - TA + STUDENT]
+│   │   ├── TAService.js                # UC-15,16,19 (reuses booking logic)
+│   │   └── ClassSearchService.js       # UC-20, UC-21, UC-22
+│   │
+│   │
+│   ├── routes/
+│   │   │
+│   │   │── [PERSON 1 - ADMIN]
+│   │   ├── auth.routes.js              # POST /api/auth/login
+│   │   │                               # POST /api/auth/logout
+│   │   ├── admin.routes.js             # /api/admin/departments
+│   │   │                               # /api/admin/teachers
+│   │   │                               # /api/admin/students
+│   │   │                               # /api/admin/rooms
+│   │   │                               # /api/admin/courses
+│   │   │                               # /api/admin/timeslots
+│   │   │                               # /api/admin/bookings/approve
+│   │   └── timetable.routes.js         # POST /api/timetable/generate
+│   │                                   # GET  /api/timetable/view
+│   │                                   # GET  /api/timetable/export
+│   │
+│   │   │── [PERSON 2 - TEACHER]
+│   │   ├── teacher.routes.js           # GET  /api/teacher/timetable
+│   │   └── booking.routes.js           # GET  /api/rooms/search
+│   │                                   # POST /api/bookings/book
+│   │                                   # DELETE /api/bookings/cancel/:id
+│   │
+│   │   │── [PERSON 3 - TA + STUDENT]
+│   │   ├── ta.routes.js                # GET  /api/ta/timetable
+│   │   │                               # GET  /api/ta/rooms/search
+│   │   │                               # POST /api/ta/bookings/book
+│   │   └── student.routes.js           # GET  /api/student/timetable
+│   │                                   # GET  /api/student/class/search
+│   │                                   # GET  /api/student/class/location
+│   │                                   # GET  /api/student/instructor/:id
+│   │
+│   │
+│   ├── middleware/                     # SHARED - one person sets up
+│   │   ├── auth.middleware.js          # Checks if user is logged in
+│   │   └── role.middleware.js          # Checks role (Admin/Teacher/TA/Student)
+│   │
+│   └── utils/                         # SHARED
+│       ├── ApiResponse.js
+│       └── Validator.js
+│
+├── .env
+├── package.json
+└── server.js                          # SHARED - imports all routes
